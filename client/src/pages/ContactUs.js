@@ -7,7 +7,6 @@ import {
   FaMapMarkerAlt, 
   FaClock, 
   FaFacebookF, 
-  FaTwitter, 
   FaLinkedinIn, 
   FaInstagram,
   FaPaperPlane,
@@ -117,25 +116,25 @@ const ContactUs = () => {
     {
       icon: MdPhone,
       title: 'Phone',
-      details: ['+92 3199911931', '+92 51 1234567'],
+      details: ['+92 3199911931'],
       color: 'from-blue-500 to-blue-600'
     },
     {
       icon: MdEmail,
       title: 'Email',
-      details: ['info@lunarismanagement.com', 'contact@lunarismanagement.com'],
+      details: ['lunarismanagement14@gmail.com'],
       color: 'from-green-500 to-green-600'
     },
     {
       icon: MdLocationOn,
       title: 'Address',
-      details: ['123 Business Center', 'F-8 Markaz, Islamabad', 'Pakistan 44000'],
+      details: ['Al Ghurair Giga Westria road', 'Plaza No #34 2nd Floor', 'DHA phase 2, Islamabad'],
       color: 'from-purple-500 to-purple-600'
     },
     {
       icon: MdAccessTime,
       title: 'Business Hours',
-      details: ['Mon - Fri: 9:00 AM - 6:00 PM', 'Saturday: 10:00 AM - 4:00 PM', 'Sunday: Closed'],
+      details: ['Mon - Fri: 10:00 AM - 6:00 PM', 'Saturday: 10:00 AM - 4:00 PM', 'Sunday: Closed'],
       color: 'from-orange-500 to-orange-600'
     }
   ];
@@ -165,11 +164,13 @@ const ContactUs = () => {
         <div className="flex items-center justify-between">
           {/* Logo - Using actual logo image */}
           <div className="flex items-center space-x-3">
-            <img 
-              src={lunarisLogo} 
-              alt="Lunaris Management & Co." 
-              className="h-12 w-24 sm:h-16 sm:w-32 lg:h-20 lg:w-48"
-            />
+            <Link to="/">
+              <img 
+                src={lunarisLogo} 
+                alt="Lunaris Management & Co." 
+                className="h-12 w-24 sm:h-16 sm:w-32 lg:h-20 lg:w-48"
+              />
+            </Link>
           </div>
 
           {/* Navigation Links - Exact match to design */}
@@ -365,10 +366,9 @@ const ContactUs = () => {
                 <h3 className="text-xl font-bold text-gray-900 mb-6">Connect With Us</h3>
                 <div className="flex space-x-4">
                   {[
-                    { icon: FaFacebookF, color: 'from-blue-600 to-blue-700', href: '#' },
-                    { icon: FaTwitter, color: 'from-blue-400 to-blue-500', href: '#' },
-                    { icon: FaLinkedinIn, color: 'from-blue-700 to-blue-800', href: '#' },
-                    { icon: FaInstagram, color: 'from-pink-500 to-purple-600', href: '#' }
+                    { icon: FaFacebookF, color: 'from-blue-600 to-blue-700', href: 'https://www.facebook.com/share/1788zGSvND/?mibextid=wwXIfr' },
+                    { icon: FaInstagram, color: 'from-pink-500 to-purple-600', href: 'https://www.instagram.com/lunaris_management?igsh=cXMwZnY5azNkYWE1' },
+                    { icon: FaLinkedinIn, color: 'from-blue-700 to-blue-800', href: '#' }
                   ].map((social, index) => (
                     <a 
                       key={index}
@@ -402,11 +402,11 @@ const ContactUs = () => {
                   </div>
                 )}
 
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form className="space-y-6" action="https://formsubmit.co/lunarismanagement14@gmail.com" method="POST">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <label htmlFor="name" className="block text-sm font-semibold text-gray-700 mb-2">
-                        Full Name *
+                        Full Name *                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
                       </label>
                       <input
                         type="text"

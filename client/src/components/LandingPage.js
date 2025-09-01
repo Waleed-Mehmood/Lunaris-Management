@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import lunarisLogo from '../assets/images/Lunaris-management-logo.png';
 import landingPageBg from '../assets/images/landing-page.svg';
@@ -7,6 +8,8 @@ import landingBgJpeg from '../assets/images/landing-bg.jpeg';
 const LandingPage = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth >= 1200);
+  const [searchLocation, setSearchLocation] = useState("");
+  const navigate = useNavigate();
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -20,6 +23,12 @@ const LandingPage = () => {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+  const handleSearch = () => {
+    const params = new URLSearchParams();
+    if (searchLocation) params.append("location", searchLocation);
+    navigate(`/properties?${params.toString()}`);
+  };
+
   return (
     <div 
       className={`min-h-screen relative overflow-hidden ${
@@ -142,7 +151,7 @@ const LandingPage = () => {
       </nav>
 
       {/* Main Content */}
-      <div className="relative z-10 px-8 pt-8 md:pt-0 pb-28">
+      <div className="relative z-10 px-8 pt-8 md:pt-0 pb-24 xl:pb-40">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center min-h-[calc(100vh-200px)]">
             {/* Left Content - Exact match to design */}
@@ -166,12 +175,17 @@ const LandingPage = () => {
                     type="text" 
                     placeholder="Find a Location" 
                     className="bg-transparent text-slate-900 placeholder-slate-400 outline-none flex-1 px-4 py-1 text-sm"
+                    value={searchLocation}
+                    onChange={e => setSearchLocation(e.target.value)}
                   />
-                  <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center cursor-pointer hover:bg-blue-600 transition-colors">
+                  <button
+                    className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center cursor-pointer hover:bg-blue-600 transition-colors"
+                    onClick={handleSearch}
+                  >
                     <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
-                  </div>
+                  </button>
                 </div>
               </div>
             </div>

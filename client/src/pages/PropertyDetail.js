@@ -1,11 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import * as FaIcons from 'react-icons/fa';
 import { Link, useParams } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchPropertyById } from '../store/slices/propertySlice';
 import { FaStar, FaChevronLeft, FaChevronRight, FaWifi, FaCar, FaSwimmingPool, FaUtensils, FaTv, FaSnowflake, FaHeart, FaShare, FaMapMarkerAlt } from 'react-icons/fa';
 import lunarisLogo from '../assets/images/Lunaris-management-logo.png';
 import Footer from '../components/Footer';
 
 const PropertyDetail = () => {
   const { id } = useParams();
+  const dispatch = useDispatch();
+  const { selectedProperty, loading, error } = useSelector(state => state.property);
+  console.log('Selected Property:', selectedProperty); // Debug log
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [selectedDates, setSelectedDates] = useState({
@@ -13,74 +19,42 @@ const PropertyDetail = () => {
     checkOut: '',
     guests: 1
   });
+  useEffect(() => {
+    if (id) {
+      dispatch(fetchPropertyById(id));
+    }
+  }, [id, dispatch]);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
-  // Sample property data
-  const property = {
-    id: 1,
-    name: "PROPERTY NAME",
-    images: [
-      'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1200&q=80',
-      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1200&q=80',
-      'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1200&q=80',
-      'https://images.unsplash.com/photo-1600573472550-8090b5e0745e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1200&q=80',
-      'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1200&q=80'
-    ],
-    location: 'Islamabad',
-    superhost: true,
-    rating: 4.93,
-    reviewCount: 9,
-    description: 'The best stay is the place and it is listed as the place to start. Let us begin!',
-    fullDescription: 'Our beautiful property offers a unique experience with stunning views and modern amenities. Located in the heart of Australia, this guest favorite provides the perfect retreat for travelers seeking comfort and luxury. The space is thoughtfully designed with attention to detail, ensuring your stay is memorable and relaxing.',
-    price: 180,
-    guests: 4,
-    bedrooms: 2,
-    bathrooms: 2,
-    amenities: [
-      { icon: FaWifi, name: 'WiFi' },
-      { icon: FaCar, name: 'Free parking' },
-      { icon: FaSwimmingPool, name: 'Pool' },
-      { icon: FaUtensils, name: 'Kitchen' },
-      { icon: FaTv, name: 'TV' },
-      { icon: FaSnowflake, name: 'Air conditioning' }
-    ],
-    reviews: [
-      {
-        id: 1,
-        user: 'Sarah',
-        avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-4.0.3&w=150&q=80',
-        rating: 5,
-        date: 'October 2024',
-        comment: 'Amazing property with beautiful views. The host was incredibly welcoming and the space was exactly as described.'
-      },
-      {
-        id: 2,
-        user: 'Michael',
-        avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&w=150&q=80',
-        rating: 5,
-        date: 'September 2024',
-        comment: 'Perfect location and spotlessly clean. Would definitely stay here again!'
-      },
-      {
-        id: 3,
-        user: 'Emily',
-        avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&w=150&q=80',
-        rating: 4,
-        date: 'August 2024',
-        comment: 'Great amenities and very comfortable. The kitchen was well-equipped for cooking.'
-      }
-    ]
+
+  // Use property from Redux store
+  const propertyData = selectedProperty && selectedProperty.property ? selectedProperty.property : {};
+
+  // Helper: prepend image path for property images (same as AdminDashboard)
+  const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+  const getImageUrl = (imgSrc) => {
+    if (typeof imgSrc === 'string' && (imgSrc.startsWith('http://') || imgSrc.startsWith('https://'))) {
+      return imgSrc;
+    } else if (typeof imgSrc === 'string') {
+      return `${API_BASE_URL}/public/images/properties/${imgSrc}`;
+    } else {
+      return '';
+    }
   };
 
   const nextImage = () => {
-    setCurrentImageIndex((prev) => (prev + 1) % property.images.length);
+    if (propertyData && Array.isArray(propertyData.images) && propertyData.images.length > 0) {
+      setCurrentImageIndex((prev) => (prev + 1) % propertyData.images.length);
+    }
   };
 
   const prevImage = () => {
-    setCurrentImageIndex((prev) => (prev - 1 + property.images.length) % property.images.length);
+    if (propertyData && Array.isArray(propertyData.images) && propertyData.images.length > 0) {
+      setCurrentImageIndex((prev) => (prev - 1 + propertyData.images.length) % propertyData.images.length);
+    }
   };
 
   const handleBooking = () => {
@@ -90,8 +64,8 @@ const PropertyDetail = () => {
 
   const handleShare = async () => {
     const shareData = {
-      title: property.name,
-      text: `Check out this amazing property: ${property.name} in ${property.location}`,
+      title: propertyData.name,
+      text: `Check out this amazing property: ${propertyData.name} in ${propertyData.location}`,
       url: window.location.href
     };
 
@@ -115,6 +89,16 @@ const PropertyDetail = () => {
       }
     }
   };
+
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+  }
+  if (error) {
+    return <div className="min-h-screen flex items-center justify-center text-red-500">{error}</div>;
+  }
+  if (!propertyData) {
+    return <div className="min-h-screen flex items-center justify-center">No property found.</div>;
+  }
 
   return (
     <div className="min-h-screen bg-white">
@@ -224,7 +208,7 @@ const PropertyDetail = () => {
         <div className="flex items-center space-x-2 text-sm text-gray-600">
           <Link to="/properties" className="hover:text-gray-800 transition-colors">Properties</Link>
           <span>/</span>
-          <span className="text-gray-800 font-medium">{property.name}</span>
+          <span className="text-gray-800 font-medium">{propertyData.title || propertyData.name}</span>
         </div>
       </div>
 
@@ -233,17 +217,17 @@ const PropertyDetail = () => {
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div>
             <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-2">
-              {property.name}
+              {propertyData.title || propertyData.name}
             </h1>
-            <div className="flex items-center gap-4 text-sm">
+              <div className="flex flex-wrap items-center gap-4 text-sm">
               <div className="flex items-center">
                 <FaStar className="w-4 h-4 text-black mr-1" />
-                <span className="font-semibold">{property.rating}</span>
-                <span className="text-gray-600 ml-1">({property.reviewCount} reviews)</span>
+                <span className="font-semibold">{propertyData.rating && propertyData.rating.average ? propertyData.rating.average : '-'}</span>
+                <span className="text-gray-600 ml-1">({propertyData.rating && propertyData.rating.count ? propertyData.rating.count : 0} reviews)</span>
               </div>
               <div className="flex items-center text-gray-600">
                 <FaMapMarkerAlt className="w-4 h-4 mr-1" />
-                <span>{property.location}</span>
+                <span>{propertyData.address || propertyData.location}</span>
               </div>
             </div>
           </div>
@@ -270,27 +254,29 @@ const PropertyDetail = () => {
           <div className="grid grid-cols-4 gap-2 h-96 overflow-hidden rounded-lg">
             {/* Main Image */}
             <div className="relative col-span-2 row-span-2">
-              <img
-                src={property.images[0]}
-                alt={property.name}
-                className="w-full h-full object-cover rounded-l-lg"
-              />
+              {Array.isArray(propertyData.images) && propertyData.images[0] && (
+                <img
+                  src={getImageUrl(propertyData.images[0])}
+                  alt={propertyData.title || propertyData.name}
+                  className="w-full h-full object-cover rounded-l-lg"
+                />
+              )}
             </div>
             
             {/* Grid Images */}
-            {property.images.slice(1, 5).map((image, index) => (
+            {Array.isArray(propertyData.images) && propertyData.images.slice(1, 5).map((image, index) => (
               <div key={index} className="relative">
                 <img
-                  src={image}
-                  alt={`${property.name} ${index + 2}`}
+                  src={getImageUrl(image)}
+                  alt={`${propertyData.title || propertyData.name} ${index + 2}`}
                   className={`w-full h-full object-cover ${
                     index === 1 ? 'rounded-tr-lg' : 
                     index === 3 ? 'rounded-br-lg' : ''
                   }`}
                 />
-                {index === 3 && property.images.length > 5 && (
+                {index === 3 && Array.isArray(propertyData.images) && propertyData.images.length > 5 && (
                   <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded-br-lg z-20">
-                    <span className="text-white font-semibold">+{property.images.length - 5} more</span>
+                    <span className="text-white font-semibold">+{propertyData.images.length - 5} more</span>
                   </div>
                 )}
               </div>
@@ -302,11 +288,13 @@ const PropertyDetail = () => {
         <div className="lg:hidden">
           {/* Main Image */}
           <div className="relative h-64 md:h-80 mb-4">
-            <img
-              src={property.images[currentImageIndex]}
-              alt={property.name}
-              className="w-full h-full object-cover rounded-lg"
-            />
+            {Array.isArray(propertyData.images) && propertyData.images[currentImageIndex] && (
+              <img
+                src={getImageUrl(propertyData.images[currentImageIndex])}
+                alt={propertyData.title || propertyData.name}
+                className="w-full h-full object-cover rounded-lg"
+              />
+            )}
             
             {/* Navigation Arrows */}
             <button
@@ -324,13 +312,13 @@ const PropertyDetail = () => {
 
             {/* Image Counter */}
             <div className="absolute bottom-4 right-4 bg-black/60 text-white px-3 py-1 rounded-full text-sm">
-              {currentImageIndex + 1} / {property.images.length}
+              {Array.isArray(propertyData.images) ? currentImageIndex + 1 : 0} / {Array.isArray(propertyData.images) ? propertyData.images.length : 0}
             </div>
           </div>
 
           {/* Thumbnail Images */}
           <div className="flex gap-2 overflow-x-auto pb-2">
-            {property.images.map((image, index) => (
+            {Array.isArray(propertyData.images) && propertyData.images.map((image, index) => (
               <button
                 key={index}
                 onClick={() => setCurrentImageIndex(index)}
@@ -339,8 +327,8 @@ const PropertyDetail = () => {
                 }`}
               >
                 <img
-                  src={image}
-                  alt={`${property.name} thumbnail ${index + 1}`}
+                  src={getImageUrl(image)}
+                  alt={`${propertyData.title || propertyData.name} thumbnail ${index + 1}`}
                   className="w-16 h-16 md:w-20 md:h-20 object-cover rounded-lg"
                 />
                 {currentImageIndex === index && (
@@ -360,79 +348,48 @@ const PropertyDetail = () => {
             {/* Property Info */}
             <div className="border-b border-gray-200 pb-8">
               <div className="flex items-center justify-between mb-4">
-                <div>
-                  <h2 className="text-xl font-semibold text-gray-900">Entire home</h2>
-                  <p className="text-gray-600">{property.guests} guests • {property.bedrooms} bedrooms • {property.bathrooms} bathrooms</p>
+                  <div>
+                    <h2 className="text-xl font-semibold text-gray-900">{propertyData.title || propertyData.name}</h2>
+                    <p className="text-gray-600">
+                      {propertyData.details && propertyData.details.maxGuests ? propertyData.details.maxGuests : '-'} guests • {propertyData.details && propertyData.details.bedrooms ? propertyData.details.bedrooms : '-'} bedrooms • {propertyData.details && propertyData.details.bathrooms ? propertyData.details.bathrooms : '-'} bathrooms
+                    </p>
+                  </div>
                 </div>
-              </div>
               
-              {/* Property Features */}
+              {/* Property Features from DB */}
               <div className="space-y-6 my-8">
-                {/* Entire home */}
-                <div className="flex items-start space-x-4">
-                  <div className="w-8 h-8 flex items-center justify-center">
-                    <svg viewBox="0 0 24 24" className="w-6 h-6 text-gray-700">
-                      <path fill="currentColor" d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
-                    </svg>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-gray-900 mb-1">Entire home</h4>
-                    <p className="text-gray-600 text-sm">You'll have the apartment to yourself</p>
-                  </div>
-                </div>
-
-                {/* Enhanced Clean */}
-                <div className="flex items-start space-x-4">
-                  <div className="w-8 h-8 flex items-center justify-center">
-                    <svg viewBox="0 0 24 24" className="w-6 h-6 text-gray-700">
-                      <path fill="currentColor" d="M9.5 2C8.67 2 8 2.67 8 3.5v17c0 .83.67 1.5 1.5 1.5h5c.83 0 1.5-.67 1.5-1.5V14h2.5c.83 0 1.5-.67 1.5-1.5v-9C20 2.67 19.33 2 18.5 2h-9z"/>
-                    </svg>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-gray-900 mb-1">Enhanced Clean</h4>
-                    <p className="text-gray-600 text-sm">This Host committed to Airbnb's 5-step enhanced cleaning process. <span className="underline cursor-pointer">Show more</span></p>
-                  </div>
-                </div>
-
-                {/* Self check-in */}
-                <div className="flex items-start space-x-4">
-                  <div className="w-8 h-8 flex items-center justify-center">
-                    <svg viewBox="0 0 24 24" className="w-6 h-6 text-gray-700">
-                      <path fill="currentColor" d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM12 17c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zM15.1 8H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
-                    </svg>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-gray-900 mb-1">Self check-in</h4>
-                    <p className="text-gray-600 text-sm">Check yourself in with the keypad.</p>
-                  </div>
-                </div>
-
-                {/* Free cancellation */}
-                <div className="flex items-start space-x-4">
-                  <div className="w-8 h-8 flex items-center justify-center">
-                    <svg viewBox="0 0 24 24" className="w-6 h-6 text-gray-700">
-                      <path fill="currentColor" d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/>
-                    </svg>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-gray-900 mb-1">Free cancellation before Feb 2</h4>
-                  </div>
-                </div>
+                {Array.isArray(propertyData.features) && propertyData.features.map((feature, idx) => {
+                  const IconComp = feature.icon && FaIcons[feature.icon] ? FaIcons[feature.icon] : FaIcons.FaPlus;
+                  return (
+                    <div key={feature._id || idx} className="flex items-start space-x-4">
+                      <div className="w-8 h-8 flex items-center justify-center">
+                        <IconComp className="w-6 h-6 text-gray-700" />
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-gray-900 mb-1">{feature.name}</h4>
+                        <p className="text-gray-600 text-sm">{feature.description}</p>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
 
-              <p className="text-gray-700 leading-relaxed">{property.fullDescription}</p>
+              <p className="text-gray-700 leading-relaxed">{propertyData.description}</p>
             </div>
 
             {/* What this place offers */}
             <div className="border-b border-gray-200 pb-8">
-              <h3 className="text-xl font-semibold text-gray-900 mb-6">What this place offers</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-6">Amenities</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {property.amenities.map((amenity, index) => (
-                  <div key={index} className="flex items-center space-x-3">
-                    <amenity.icon className="w-5 h-5 text-gray-600" />
-                    <span className="text-gray-700">{amenity.name}</span>
-                  </div>
-                ))}
+                {Array.isArray(propertyData.amenities) && propertyData.amenities.map((amenity, index) => {
+                  const IconComp = amenity.icon && FaIcons[amenity.icon] ? FaIcons[amenity.icon] : FaIcons.FaPlus;
+                  return (
+                    <div key={amenity._id || index} className="flex items-center space-x-3">
+                      <IconComp className="w-5 h-5 text-gray-600" />
+                      <span className="text-gray-700">{amenity.name}</span>
+                    </div>
+                  );
+                })}
               </div>
             </div>
 
@@ -442,51 +399,39 @@ const PropertyDetail = () => {
               <div className="flex items-center justify-between mb-8">
                 <div className="flex items-center gap-2">
                   <FaStar className="w-6 h-6 text-yellow-400" />
-                  <span className="text-2xl font-bold text-gray-900">{property.rating}</span>
-                  <span className="text-xl font-semibold text-gray-700">• {property.reviewCount} reviews</span>
+                  <span className="text-2xl font-bold text-gray-900">{propertyData.rating && propertyData.rating.average ? propertyData.rating.average : '-'}</span>
+                  <span className="text-xl font-semibold text-gray-700">• {propertyData.rating && propertyData.rating.count ? propertyData.rating.count : 0} reviews</span>
                 </div>
-                <button className="text-blue-600 hover:text-blue-800 font-semibold text-sm border border-blue-600 hover:border-blue-800 px-4 py-2 rounded-lg transition-colors">
-                  Show all reviews
-                </button>
               </div>
-              
               {/* Reviews Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {property.reviews.map((review) => (
-                  <div key={review.id} className="bg-white border border-gray-100 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
-                    <div className="flex items-center space-x-3 mb-4">
-                      <img
-                        src={review.avatar}
-                        alt={review.user}
-                        className="w-12 h-12 rounded-full object-cover ring-2 ring-gray-100"
-                      />
-                      <div className="flex-1">
-                        <p className="font-semibold text-gray-900">{review.user}</p>
-                        <p className="text-sm text-gray-500">{review.date}</p>
+                {Array.isArray(propertyData.reviews) && propertyData.reviews.length > 0 ? (
+                  propertyData.reviews.map((review, idx) => (
+                    <div key={review._id || idx} className="bg-white border border-gray-100 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+                      <div className="flex items-center space-x-3 mb-4">
+                        <img
+                          src={review.photo ? getImageUrl(review.photo) : 'https://via.placeholder.com/48'}
+                          alt={review.user}
+                          className="w-12 h-12 rounded-full object-cover ring-2 ring-gray-100"
+                        />
+                        <div className="flex-1">
+                          <p className="font-semibold text-gray-900">{review.user}</p>
+                          <p className="text-sm text-gray-500">
+                            {review.date ? new Date(review.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' }) : ''}
+                          </p>
+                        </div>
+                        <div className="flex items-center space-x-1">
+                          {[...Array(review.rating)].map((_, i) => (
+                            <FaStar key={i} className="w-4 h-4 text-yellow-400" />
+                          ))}
+                        </div>
                       </div>
-                      <div className="flex items-center space-x-1">
-                        {[...Array(review.rating)].map((_, i) => (
-                          <FaStar key={i} className="w-4 h-4 text-yellow-400" />
-                        ))}
-                      </div>
+                      <p className="text-gray-700 leading-relaxed">{review.review}</p>
                     </div>
-                    <p className="text-gray-700 leading-relaxed">{review.comment}</p>
-                    
-                    {/* Read more functionality for longer reviews */}
-                    {review.comment.length > 150 && (
-                      <button className="text-blue-600 hover:text-blue-800 text-sm font-medium mt-2 transition-colors">
-                        Read more
-                      </button>
-                    )}
-                  </div>
-                ))}
-              </div>
-
-              {/* Show More Reviews Button */}
-              <div className="mt-8 text-center">
-                <button className="bg-white border border-gray-300 hover:border-gray-400 text-gray-700 hover:text-gray-900 px-8 py-3 rounded-xl font-semibold transition-all hover:shadow-sm">
-                  Show more reviews ({property.reviewCount - 3} more)
-                </button>
+                  ))
+                ) : (
+                  <div className="col-span-full text-gray-500">No reviews yet.</div>
+                )}
               </div>
             </div>
           </div>

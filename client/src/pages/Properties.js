@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { fetchProperties } from '../store/slices/propertySlice';
 import { Link } from 'react-router-dom';
 import { FaStar, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import lunarisLogo from '../assets/images/Lunaris-management-logo.png';
@@ -7,130 +9,64 @@ import Footer from '../components/Footer';
 const Properties = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchFilters, setSearchFilters] = useState({
-    location: 'Where are you going?',
-    guests: 'Add guests'
+    location: '',
+    guests: ''
   });
+  const [filteredProperties, setFilteredProperties] = useState([]);
   const [currentImageIndex, setCurrentImageIndex] = useState({});
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
-  // Sample property data with multiple images for slider
-  const properties = [
-    {
-      id: 1,
-      name: 'Luxury Villa with Mountain View',
-      images: [
-        'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80',
-        'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80',
-        'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80',
-        'https://images.unsplash.com/photo-1600573472550-8090b5e0745e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80',
-        'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80'
-      ],
-      location: 'Islamabad, Pakistan',
-      distance: '7,994 km away',
-      rating: 4.93
-    },
-    {
-      id: 2,
-      name: 'Modern Apartment Downtown',
-      images: [
-        'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80',
-        'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80',
-        'https://images.unsplash.com/photo-1600573472550-8090b5e0745e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80',
-        'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80'
-      ],
-      location: 'Islamabad, Pakistan',
-      distance: '7,994 km away',
-      rating: 4.93
-    },
-    {
-      id: 3,
-      name: 'Cozy Studio Near Park',
-      images: [
-        'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80',
-        'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80',
-        'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80',
-        'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80',
-        'https://images.unsplash.com/photo-1600573472550-8090b5e0745e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80'
-      ],
-      location: 'Islamabad, Pakistan',
-      distance: '7,994 km away',
-      rating: 4.93
-    },
-    {
-      id: 4,
-      name: 'Executive Suite with City View',
-      images: [
-        'https://images.unsplash.com/photo-1600573472550-8090b5e0745e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80',
-        'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80',
-        'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80',
-        'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80'
-      ],
-      location: 'Islamabad, Pakistan',
-      distance: '7,994 km away',
-      rating: 4.93
-    },
-    {
-      id: 5,
-      name: 'Charming Penthouse Loft',
-      images: [
-        'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80',
-        'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80',
-        'https://images.unsplash.com/photo-1600573472550-8090b5e0745e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80',
-        'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80',
-        'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80'
-      ],
-      location: 'Islamabad, Pakistan',
-      distance: '7,994 km away',
-      rating: 4.93
-    },
-    {
-      id: 6,
-      name: 'Elegant Two-Bedroom Suite',
-      images: [
-        'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80',
-        'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80',
-        'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80',
-        'https://images.unsplash.com/photo-1600573472550-8090b5e0745e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80'
-      ],
-      location: 'Islamabad, Pakistan',
-      distance: '7,994 km away',
-      rating: 4.93
-    },
-    {
-      id: 7,
-      name: 'Boutique Garden Apartment',
-      images: [
-        'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80',
-        'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80',
-        'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80',
-        'https://images.unsplash.com/photo-1600573472550-8090b5e0745e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80',
-        'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80'
-      ],
-      location: 'Islamabad, Pakistan',
-      distance: '7,994 km away',
-      rating: 4.93
-    },
-    {
-      id: 8,
-      name: 'Premium Skyline Residence',
-      images: [
-        'https://images.unsplash.com/photo-1600573472550-8090b5e0745e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80',
-        'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80',
-        'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80',
-        'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80'
-      ],
-      location: 'Islamabad, Pakistan',
-      distance: '7,994 km away',
-      rating: 4.93
-    }
-  ];
+  // Redux integration
+  const dispatch = useAppDispatch();
+  const { properties, loading } = useAppSelector(state => state.property);
+
+  useEffect(() => {
+    dispatch(fetchProperties());
+  }, [dispatch]);
+
+  useEffect(() => {
+    setFilteredProperties(properties);
+  }, [properties]);
 
   const handleSearch = () => {
-    // Implement search functionality
-    console.log('Search filters:', searchFilters);
+    let filtered = properties;
+    const locationInput = searchFilters.location.trim().toLowerCase();
+    const guestsInput = searchFilters.guests.trim();
+    const guestsNum = parseInt(guestsInput, 10);
+
+    filtered = filtered.filter(p => {
+      let locationMatch = true;
+      let guestsMatch = true;
+      // Location filter
+      if (locationInput) {
+        locationMatch = p.address && p.address.toLowerCase().includes(locationInput);
+      }
+      // Guests filter
+      if (guestsInput && !isNaN(guestsNum)) {
+        if (typeof p.guests !== 'undefined' && p.guests !== null) {
+          guestsMatch = Number(p.guests) >= guestsNum;
+        } else if (typeof p.maxGuests !== 'undefined' && p.maxGuests !== null) {
+          guestsMatch = Number(p.maxGuests) >= guestsNum;
+        } else if (p.details && typeof p.details.maxGuests !== 'undefined' && p.details.maxGuests !== null) {
+          guestsMatch = Number(p.details.maxGuests) >= guestsNum;
+        } else {
+          guestsMatch = false;
+        }
+      }
+      // If both filters are provided, both must match. If only one is provided, only that must match.
+      if (locationInput && guestsInput && !isNaN(guestsNum)) {
+        return locationMatch && guestsMatch;
+      } else if (locationInput) {
+        return locationMatch;
+      } else if (guestsInput && !isNaN(guestsNum)) {
+        return guestsMatch;
+      }
+      return true;
+    });
+    setFilteredProperties(filtered);
   };
 
   const nextImage = (propertyId, totalImages) => {
@@ -161,11 +97,13 @@ const Properties = () => {
         <div className="flex items-center justify-between">
           {/* Logo - Using actual logo image */}
           <div className="flex items-center space-x-3">
-            <img 
-              src={lunarisLogo} 
-              alt="Lunaris Management & Co." 
-              className="h-12 w-24 sm:h-16 sm:w-32 lg:h-20 lg:w-48"
-            />
+            <Link to="/">
+              <img 
+                src={lunarisLogo} 
+                alt="Lunaris Management & Co." 
+                className="h-12 w-24 sm:h-16 sm:w-32 lg:h-20 lg:w-48"
+              />
+            </Link>
           </div>
 
           {/* Navigation Links - Exact match to design */}
@@ -385,8 +323,8 @@ const Properties = () => {
                   type="text"
                   placeholder="Where are you going?"
                   className="w-full text-sm text-gray-600 placeholder-gray-400 border-none outline-none bg-transparent font-medium"
-                  value={searchFilters.location === 'Where are you going?' ? '' : searchFilters.location}
-                  onChange={(e) => setSearchFilters({...searchFilters, location: e.target.value || 'Where are you going?'})}
+                  value={searchFilters.location}
+                  onChange={(e) => setSearchFilters({...searchFilters, location: e.target.value})}
                 />
               </div>
             </div>
@@ -399,8 +337,8 @@ const Properties = () => {
                   type="text"
                   placeholder="Add guests"
                   className="w-full text-sm text-gray-600 placeholder-gray-400 border-none outline-none bg-transparent font-medium"
-                  value={searchFilters.guests === 'Add guests' ? '' : searchFilters.guests}
-                  onChange={(e) => setSearchFilters({...searchFilters, guests: e.target.value || 'Add guests'})}
+                  value={searchFilters.guests}
+                  onChange={(e) => setSearchFilters({...searchFilters, guests: e.target.value})}
                 />
               </div>
             </div>
@@ -422,15 +360,23 @@ const Properties = () => {
       {/* Properties Grid - Matching the exact layout from image */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 lg:py-12">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5 lg:gap-6">
-          {properties.map((property) => {
-            const currentIndex = currentImageIndex[property.id] || 0;
+          {loading ? (
+            <div className="text-center col-span-4 py-8">Loading properties...</div>
+          ) : filteredProperties.length === 0 ? (
+            <div className="text-center col-span-4 py-8">No properties found.</div>
+          ) : filteredProperties.map((property) => {
+            const currentIndex = currentImageIndex[property._id] || 0;
             return (
-              <div key={property.id} className="group">
+              <div key={property._id} className="group">
                 {/* Property Image Slider */}
                 <div className="relative overflow-hidden rounded-xl mb-3">
                   <img
-                    src={property.images[currentIndex]}
-                    alt={property.location}
+                    src={property.images && property.images.length > 0
+                      ? (property.images[currentIndex].startsWith('http')
+                          ? property.images[currentIndex]
+                          : `${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/public/images/properties/${property.images[currentIndex]}`)
+                      : '/default-property.jpg'}
+                    alt={property.title}
                     className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                   
@@ -440,7 +386,7 @@ const Properties = () => {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          prevImage(property.id, property.images.length);
+                          prevImage(property._id, property.images.length);
                         }}
                         className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-80 hover:bg-opacity-100 p-2 rounded-full transition-all opacity-0 group-hover:opacity-100 z-10"
                       >
@@ -450,7 +396,7 @@ const Properties = () => {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          nextImage(property.id, property.images.length);
+                          nextImage(property._id, property.images.length);
                         }}
                         className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-80 hover:bg-opacity-100 p-2 rounded-full transition-all opacity-0 group-hover:opacity-100 z-10"
                       >
@@ -468,7 +414,7 @@ const Properties = () => {
                           key={index}
                           onClick={(e) => {
                             e.stopPropagation();
-                            goToImage(property.id, index);
+                            goToImage(property._id, index);
                           }}
                           className={`w-2 h-2 rounded-full transition-all ${
                             index === currentIndex 
@@ -482,17 +428,17 @@ const Properties = () => {
                 </div>
 
                 {/* Property Details */}
-                <Link to={`/property/${property.id}`}>
+                <Link to={`/property/${property._id}`}>
                   <div className="space-y-1 px-2 py-2 md:px-0 md:py-0">
                     {/* Property Name */}
                     <h2 className="font-bold text-gray-900 text-base mb-2">
-                      {property.name}
+                      {property.title}
                     </h2>
                     
                     {/* Location and Rating */}
                     <div className="flex items-center justify-between">
                       <h3 className="font-semibold text-gray-900 text-sm">
-                        {property.location}
+                        {property.address}
                       </h3>
                       <div className="flex items-center space-x-1">
                         <svg
@@ -502,7 +448,7 @@ const Properties = () => {
                           <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                         </svg>
                         <span className="text-sm font-medium text-gray-900">
-                          {property.rating}
+                          {property.rating && typeof property.rating === 'object' ? property.rating.average : property.rating}
                         </span>
                       </div>
                     </div>

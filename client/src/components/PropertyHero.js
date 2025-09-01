@@ -1,8 +1,25 @@
-import React from "react";
+import React, { useState } from "react";
 import { FiSearch } from "react-icons/fi";
 import houseImage from "../assets/images/landing-section.png"; // replace with your image path
+import { useNavigate } from "react-router-dom";
 
-export default function PropertyHero() {
+export default function PropertyHero({ onSearch }) {
+  const [location, setLocation] = useState("");
+  const [guests, setGuests] = useState("");
+  const navigate = useNavigate();
+
+  const handleSearch = () => {
+    // If you want to use a parent callback, keep this
+    if (onSearch) {
+      onSearch({ location, guests });
+    }
+    // Navigate to Properties page with query params
+    const params = new URLSearchParams();
+    if (location) params.append("location", location);
+    if (guests) params.append("guests", guests);
+    navigate(`/properties?${params.toString()}`);
+  };
+
   return (
     <div className="bg-white py-6 sm:py-8 md:py-12 lg:py-16 xl:py-20">
       <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
@@ -49,6 +66,8 @@ export default function PropertyHero() {
                   type="text"
                   placeholder="Where are you going?"
                   className="bg-transparent border-none outline-none text-gray-700 font-medium placeholder-gray-500 w-full text-sm sm:text-base"
+                  value={location}
+                  onChange={e => setLocation(e.target.value)}
                 />
               </div>
 
@@ -61,10 +80,15 @@ export default function PropertyHero() {
                   placeholder="Add guests"
                   min="1"
                   className="bg-transparent border-none outline-none text-gray-700 font-medium placeholder-gray-500 w-full text-sm sm:text-base"
+                  value={guests}
+                  onChange={e => setGuests(e.target.value)}
                 />
               </div>
 
-              <button className="bg-[#172c3e] hover:bg-[#325d83] text-white p-2 sm:p-3 rounded-full transition duration-200 w-full lg:w-auto flex items-center justify-center">
+              <button
+                onClick={handleSearch}
+                className="bg-[#172c3e] hover:bg-[#325d83] text-white p-2 sm:p-3 rounded-full transition duration-200 w-full lg:w-auto flex items-center justify-center"
+              >
                 <FiSearch size={16} className="sm:hidden" />
                 <FiSearch size={20} className="hidden sm:block" />
                 <span className="ml-2 lg:hidden text-sm sm:text-base">
