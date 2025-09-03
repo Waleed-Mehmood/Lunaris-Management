@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import lunarisLogo from '../assets/images/Lunaris-management-logo.png';
-import aboutUsImg from '../assets/images/aboutus.png';
+import aboutUsImg from '../assets/images/about2.jpg';
 import landingBgJpeg from '../assets/images/landing-bg.jpeg';
 import Footer from '../components/Footer';
 
@@ -109,7 +109,7 @@ const About = () => {
       </div>
 
       {/* Main Content */}
-      <div className="py-16">
+      <div className="pt-16">
         {/* About Us Section */}
         <section className="py-12 sm:py-16 bg-white">
           <div className="max-w-6xl mx-auto px-4 sm:px-6">

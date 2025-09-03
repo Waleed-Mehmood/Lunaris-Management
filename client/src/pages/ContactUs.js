@@ -368,7 +368,7 @@ const ContactUs = () => {
                   {[
                     { icon: FaFacebookF, color: 'from-blue-600 to-blue-700', href: 'https://www.facebook.com/share/1788zGSvND/?mibextid=wwXIfr' },
                     { icon: FaInstagram, color: 'from-pink-500 to-purple-600', href: 'https://www.instagram.com/lunaris_management?igsh=cXMwZnY5azNkYWE1' },
-                    { icon: FaLinkedinIn, color: 'from-blue-700 to-blue-800', href: '#' }
+                    { icon: FaLinkedinIn, color: 'from-blue-700 to-blue-800', href: 'https://www.linkedin.com/company/lunaris-management' }
                   ].map((social, index) => (
                     <a 
                       key={index}

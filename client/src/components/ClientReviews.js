@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const ClientReviews = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -14,7 +15,6 @@ const ClientReviews = () => {
     const checkScreenSize = () => {
       const prevScreenSize = screenSize;
       const width = window.innerWidth;
-      
       let newScreenSize;
       if (width < 768) {
         newScreenSize = 'mobile'; // 1 card
@@ -23,20 +23,24 @@ const ClientReviews = () => {
       } else {
         newScreenSize = 'desktop'; // 3 cards
       }
-      
       setScreenSize(newScreenSize);
-      
       // Reset slide when switching between screen sizes
       if (prevScreenSize !== newScreenSize) {
         setCurrentSlide(0);
       }
     };
-
     checkScreenSize();
     window.addEventListener('resize', checkScreenSize);
-
     return () => window.removeEventListener('resize', checkScreenSize);
   }, [screenSize]);
+
+  // Autoplay effect
+  useEffect(() => {
+    const interval = setInterval(() => {
+      nextSlide();
+    }, 4000); // Change slide every 4 seconds
+    return () => clearInterval(interval);
+  }, [currentSlide, screenSize]);
 
   // Sample review data based on the image
   const reviews = [
@@ -209,10 +213,20 @@ const ClientReviews = () => {
   };
 
   return (
-    <div className="client-reviews-section bg-gray-50 py-16">
+    <motion.div
+      className="client-reviews-section bg-gray-50 py-16"
+      initial={{ opacity: 0, y: 40 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.7, ease: 'easeOut' }}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Title */}
-        <div className="text-center mb-12">
+        <motion.div
+          className="text-center mb-12"
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+        >
           <div className="flex items-center mb-8 w-full justify-center">
             {/* Left Arrow */}
             <svg width="32" height="12" viewBox="0 0 32 12" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2">
@@ -224,73 +238,96 @@ const ClientReviews = () => {
             {/* Right Line */}
             <div className="flex-1 ml-2 h-0.5 rounded-full" style={{minWidth: '32px', background: '#CBE9FF'}}></div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Reviews Carousel */}
         <div className="relative max-w-6xl mx-auto">
-          <div 
+          <motion.div
             className="overflow-hidden"
             ref={carouselRef}
             onMouseDown={handleMouseDown}
             onMouseLeave={handleMouseLeave}
             style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
           >
-            <div 
+            <motion.div
               className={`flex ${isDragging ? '' : 'transition-transform duration-300 ease-in-out'}`}
               style={{ transform: getTransform() }}
+              initial={false}
+              animate={isDragging ? {} : {}}
             >
-              {reviews.map((review, index) => (
-                <div key={review.id} className={`${
-                  screenSize === 'mobile' ? 'w-full' : 
-                  screenSize === 'tablet' ? 'w-1/2' : 
-                  'w-1/3'
-                } flex-shrink-0 px-4`}>
-                  <div className={`review-card bg-white rounded-lg p-6 border transition-all duration-300 ${
-                    // Highlight logic for different screen sizes
-                    (screenSize === 'mobile' && index === currentSlide) || 
-                    (screenSize === 'tablet' && (index === currentSlide || index === currentSlide + 1)) ||
-                    (screenSize === 'desktop' && index === currentSlide + 1)
-                      ? 'shadow-md border-gray-200 transform scale-105' 
-                      : 'shadow-sm border-gray-100'
-                  }`}>
-                    {/* User Info */}
-                    <div className="flex items-center mb-4">
-                      <div className="w-12 h-12 rounded-full bg-gray-200 mr-3 overflow-hidden">
-                        <img 
-                          src={review.avatar}
-                          alt={review.name}
-                          className="w-full h-full object-cover"
-                        />
+              <AnimatePresence initial={false}>
+                {reviews.map((review, index) => (
+                  <motion.div
+                    key={review.id}
+                    className={`${
+                      screenSize === 'mobile' ? 'w-full' : 
+                      screenSize === 'tablet' ? 'w-1/2' : 
+                      'w-1/3'
+                    } flex-shrink-0 px-4`}
+                    initial={{ opacity: 0, y: 40, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 40, scale: 0.95 }}
+                    transition={{ duration: 0.5, delay: 0.1 * index }}
+                  >
+                    <motion.div
+                      className={`review-card bg-white rounded-lg p-6 border transition-all duration-300 ${
+                        (screenSize === 'mobile' && index === currentSlide) || 
+                        (screenSize === 'tablet' && (index === currentSlide || index === currentSlide + 1)) ||
+                        (screenSize === 'desktop' && index === currentSlide + 1)
+                          ? 'shadow-md border-gray-200 transform scale-105' 
+                          : 'shadow-sm border-gray-100'
+                      }`}
+                      whileHover={{ scale: 1.07, boxShadow: '0 8px 32px rgba(0,0,0,0.10)' }}
+                      initial={false}
+                    >
+                      {/* User Info */}
+                      <div className="flex items-center mb-4">
+                        <motion.div
+                          className="w-12 h-12 rounded-full bg-gray-200 mr-3 overflow-hidden"
+                          initial={{ scale: 0.8, opacity: 0 }}
+                          animate={{ scale: 1, opacity: 1 }}
+                          transition={{ duration: 0.4, delay: 0.2 }}
+                        >
+                          <img 
+                            src={review.avatar}
+                            alt={review.name}
+                            className="w-full h-full object-cover"
+                          />
+                        </motion.div>
+                        <div>
+                          <h4 className="font-semibold text-gray-900 text-sm">{review.name}</h4>
+                          <p className="text-xs text-gray-500">{review.location}</p>
+                        </div>
                       </div>
-                      <div>
-                        <h4 className="font-semibold text-gray-900 text-sm">{review.name}</h4>
-                        <p className="text-xs text-gray-500">{review.location}</p>
+                      {/* Rating */}
+                      <div className="flex items-center mb-3">
+                        {renderStars(review.rating)}
                       </div>
-                    </div>
-                    
-                    {/* Rating */}
-                    <div className="flex items-center mb-3">
-                      {renderStars(review.rating)}
-                    </div>
-                    
-                    {/* Review Title */}
-                    <h5 className="font-semibold text-gray-900 mb-3 text-sm">
-                      {review.title}
-                    </h5>
-                    
-                    {/* Review Text */}
-                    <p className="text-xs text-gray-600 leading-relaxed">
-                      {review.review}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-          
+                      {/* Review Title */}
+                      <h5 className="font-semibold text-gray-900 mb-3 text-sm">
+                        {review.title}
+                      </h5>
+                      {/* Review Text */}
+                      <p className="text-xs text-gray-600 leading-relaxed">
+                        {review.review}
+                      </p>
+                    </motion.div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </motion.div>
+          </motion.div>
 
           {/* Pagination Dots with Arrows */}
-          <div className="flex justify-center items-center mt-8 space-x-4">
+          <motion.div
+            className="flex justify-center items-center mt-8 space-x-4"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.5 }}
+          >
             {/* Left Arrow */}
             <button
               onClick={prevSlide}
@@ -309,7 +346,7 @@ const ClientReviews = () => {
             {/* Pagination Dots */}
             <div className="flex space-x-2">
               {[...Array(maxSlide + 1)].map((_, index) => (
-                <button
+                <motion.button
                   key={index}
                   onClick={() => goToSlide(index)}
                   className={`w-3 h-3 rounded-full transition-colors ${
@@ -317,6 +354,8 @@ const ClientReviews = () => {
                       ? 'bg-gray-800' 
                       : 'bg-gray-300 hover:bg-gray-400'
                   }`}
+                  whileHover={{ scale: 1.2 }}
+                  initial={false}
                 />
               ))}
             </div>
@@ -335,10 +374,10 @@ const ClientReviews = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
             </button>
-          </div>
+          </motion.div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

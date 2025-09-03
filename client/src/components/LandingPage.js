@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import lunarisLogo from '../assets/images/Lunaris-management-logo.png';
@@ -30,25 +31,34 @@ const LandingPage = () => {
   };
 
   return (
-    <div 
-      className={`min-h-screen relative overflow-hidden ${
-        isLargeScreen 
-          ? '' 
-          : ''
-      }`}
-      style={{
-        backgroundImage: isLargeScreen ? `url(${landingPageBg})` : `url(${landingBgJpeg})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat'
-      }}>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.8 }}
+        className={`min-h-screen relative overflow-hidden ${
+          isLargeScreen 
+            ? '' 
+            : ''
+        }`}
+        style={{
+          backgroundImage: isLargeScreen ? `url(${landingPageBg})` : `url(${landingBgJpeg})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        }}>
       {/* Overlay for better text readability */}
       <div className={`absolute inset-0 ${
         isLargeScreen ? '' : 'bg-black/40'
       }`}></div>
 
       {/* Navigation */}
-      <nav className="relative z-20 px-8 py-4">
+      <motion.nav
+        className="relative z-20 px-8 py-4"
+        initial={{ y: -60, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.7, ease: 'easeOut' }}
+      >
         <div className="flex items-center justify-between">
           {/* Logo - Using actual logo image */}
             <div className="flex items-center space-x-3">
@@ -105,71 +115,95 @@ const LandingPage = () => {
         </div>
 
         {/* Mobile Menu */}
-        <div className={`md:hidden fixed inset-0 bg-slate-900/95 backdrop-blur-sm transition-all duration-300 z-40 ${
-          isMobileMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
-        }`}>
-          <div className="flex flex-col items-center justify-center h-full space-y-8 text-white text-lg">
-            <Link 
-              to="/" 
-              className="hover:text-blue-300 transition-colors font-medium"
-              onClick={() => setIsMobileMenuOpen(false)}
+        <AnimatePresence>
+          {isMobileMenuOpen && (
+            <motion.div
+              initial={{ x: '100%', opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: '100%', opacity: 0 }}
+              transition={{ duration: 0.4 }}
+              className="md:hidden fixed inset-0 bg-slate-900/95 backdrop-blur-sm transition-all duration-300 z-40"
             >
-              Home
-            </Link>
-            <Link 
-              to="/about" 
-              className="hover:text-blue-300 transition-colors font-medium"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              About
-            </Link>
-              <Link 
-                to="/properties" 
-                className="hover:text-blue-300 transition-colors font-medium"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Properties
-              </Link>
-            <Link 
-              to="/contact" 
-              className="hover:text-blue-300 transition-colors font-medium"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Contact us
-            </Link>
-            <a 
-              href="https://calendly.com/lunarismanagement14/30min" 
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-transparent border border-white/60 px-5 py-2 rounded-full hover:bg-white hover:text-slate-900 transition-all font-medium"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Book a Meeting
-            </a>
-          </div>
-        </div>
-      </nav>
+              <div className="flex flex-col items-center justify-center h-full space-y-8 text-white text-lg">
+                <Link 
+                  to="/" 
+                  className="hover:text-blue-300 transition-colors font-medium"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Home
+                </Link>
+                <Link 
+                  to="/about" 
+                  className="hover:text-blue-300 transition-colors font-medium"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  About
+                </Link>
+                <Link 
+                  to="/properties" 
+                  className="hover:text-blue-300 transition-colors font-medium"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Properties
+                </Link>
+                <Link 
+                  to="/contact" 
+                  className="hover:text-blue-300 transition-colors font-medium"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Contact us
+                </Link>
+                <a 
+                  href="https://calendly.com/lunarismanagement14/30min" 
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-transparent border border-white/60 px-5 py-2 rounded-full hover:bg-white hover:text-slate-900 transition-all font-medium"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Book a Meeting
+                </a>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+  </motion.nav>
 
       {/* Main Content */}
       <div className="relative z-10 px-8 pt-8 md:pt-0 pb-24 xl:pb-40">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center min-h-[calc(100vh-200px)]">
             {/* Left Content - Exact match to design */}
-            <div className="text-white space-y-8">
-              <div>
+            <motion.div
+              className="text-white space-y-8"
+              initial={{ x: -80, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+            >
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.7, delay: 0.4 }}
+              >
                 <h1 className="text-4xl lg:text-5xl font-bold leading-tight">
                   FIND YOUR<br />
                   PLACE<br />
                   OF DREAM
                 </h1>
-              </div>
-              
-              <p className="text-base lg:text-md opacity-80 max-w-sm leading-relaxed">
+              </motion.div>
+              <motion.p
+                className="text-base lg:text-md opacity-80 max-w-sm leading-relaxed"
+                initial={{ y: 30, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.7, delay: 0.7 }}
+              >
                 We are glad to have you around. Feel free to browse our website.
-              </p>
-              
+              </motion.p>
               {/* Search bar - matching design exactly */}
-              <div>
+              <motion.div
+                initial={{ y: 40, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.7, delay: 1 }}
+              >
                 <div className="bg-white rounded-full px-2 py-1 flex items-center max-w-sm shadow-lg">
                   <input 
                     type="text" 
@@ -178,23 +212,25 @@ const LandingPage = () => {
                     value={searchLocation}
                     onChange={e => setSearchLocation(e.target.value)}
                   />
-                  <button
+                  <motion.button
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
                     className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center cursor-pointer hover:bg-blue-600 transition-colors"
                     onClick={handleSearch}
                   >
                     <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
-                  </button>
+                  </motion.button>
                 </div>
-              </div>
-            </div>
-
+              </motion.div>
+            </motion.div>
+            {/* ...existing code... (right column, if any) */}
           </div>
         </div>
       </div>
 
-    </div>
+  </motion.div>
   );
 };
 

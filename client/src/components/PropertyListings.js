@@ -12,6 +12,22 @@ const PropertyListings = () => {
   const dispatch = useAppDispatch();
   const { properties, loading } = useAppSelector(state => state.property);
 
+  // Autoplay for image slider
+  useEffect(() => {
+    const interval = setInterval(() => {
+      // Only autoplay for properties with more than 1 image
+      properties.forEach(property => {
+        if (property.images && property.images.length > 1) {
+          setCurrentImageIndex(prev => ({
+            ...prev,
+            [property._id]: ((prev[property._id] || 0) + 1) % property.images.length
+          }));
+        }
+      });
+    }, 4000); // Change image every 4 seconds
+    return () => clearInterval(interval);
+  }, [properties]);
+
   useEffect(() => {
     dispatch(fetchProperties());
   }, [dispatch]);

@@ -15,6 +15,21 @@ const Properties = () => {
   const [filteredProperties, setFilteredProperties] = useState([]);
   const [currentImageIndex, setCurrentImageIndex] = useState({});
 
+  // Autoplay for image slider
+  useEffect(() => {
+    const interval = setInterval(() => {
+      filteredProperties.forEach(property => {
+        if (property.images && property.images.length > 1) {
+          setCurrentImageIndex(prev => ({
+            ...prev,
+            [property._id]: ((prev[property._id] || 0) + 1) % property.images.length
+          }));
+        }
+      });
+    }, 4000); // Change image every 4 seconds
+    return () => clearInterval(interval);
+  }, [filteredProperties]);
+
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
