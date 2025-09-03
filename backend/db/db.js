@@ -2,11 +2,14 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 dotenv.config({ path: "./config.env" });
 
-const DB_URI = process.env.DB_URI.replace("<password>", process.env.DB_PASS);
+const DB_URI = process.env.DB_URI;
 
 const connectDB = async () => {
   try {
-    await mongoose.connect(DB_URI);
+    await mongoose.connect(DB_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
     console.log(`MongoDB Connected!`);
   } catch (error) {
     console.error(`Error: ${error.message}`);
