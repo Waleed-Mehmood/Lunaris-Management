@@ -97,7 +97,12 @@ export const logIn = async (req, res) => {
 
 export const logout = async (_, res) => {
   try {
-    res.clearCookie("jwt");
+    res.clearCookie("jwt", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "None",
+      domain: ".lunarismanagement.com" // correct format for domain
+    });
     res.status(200).json({
       success: true,
       message: "You have been logged out.",
