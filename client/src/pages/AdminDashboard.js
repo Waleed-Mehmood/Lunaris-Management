@@ -168,8 +168,11 @@ const AdminDashboard = () => {
   }, [user, token, dispatch]);
 
   const handleLogout = () => {
-    dispatch(logOut());
-    window.location.href = '/adminlogin';
+    const logoutAndRedirect = async () => {
+      await dispatch(logOut());
+      window.location.href = '/adminlogin';
+    };
+    logoutAndRedirect();
   };
   const [showAddPropertyModal, setShowAddPropertyModal] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState({});

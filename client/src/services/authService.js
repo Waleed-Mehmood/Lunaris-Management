@@ -55,7 +55,8 @@ const register = async (userData) => {
 
 // Log out user
 const logOut = async () => {
-  const response = await api.post('/api/v1/user/log-out');
+  const response = await api.post('/api/v1/user/log-out', {}, { withCredentials: true });
+  localStorage.removeItem('token');
   return response.data;
 };
 
