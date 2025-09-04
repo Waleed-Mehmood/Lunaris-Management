@@ -122,11 +122,20 @@ export const checkAuth = async (req, res) => {
         error: "Authentication failed. User does not exist."
       });
 
+    // Get token from cookie or Authorization header
+    let token = req.cookies.jwt;
+    if (!token && req.headers.authorization) {
+      const authHeader = req.headers.authorization;
+      if (authHeader.startsWith('Bearer ')) {
+        token = authHeader.split(' ')[1];
+      }
+    }
     res.status(200).json({
       success: true,
       message: "User authenticated successfully.",
       error: null,
-      user
+      user,
+      token
     });
   } catch (err) {
     res.status(500).json({

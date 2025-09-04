@@ -19,7 +19,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      authService.setAuthToken(token);
+  // authService.setAuthToken(token); // removed, now handled by axios header
       getCurrentUser();
     } else {
       dispatch({ type: 'AUTH_LOADED' });
@@ -34,7 +34,7 @@ export const AuthProvider = ({ children }) => {
       
       if (response.success) {
         localStorage.setItem('token', response.token);
-        authService.setAuthToken(response.token);
+  // authService.setAuthToken(response.token); // removed, now handled by axios header
         dispatch({ 
           type: 'AUTH_SUCCESS', 
           payload: { user: response.user, token: response.token }
@@ -56,7 +56,7 @@ export const AuthProvider = ({ children }) => {
       
       if (response.success) {
         localStorage.setItem('token', response.token);
-        authService.setAuthToken(response.token);
+  // authService.setAuthToken(response.token); // removed, now handled by axios header
         dispatch({ 
           type: 'AUTH_SUCCESS', 
           payload: { user: response.user, token: response.token }
@@ -91,7 +91,7 @@ export const AuthProvider = ({ children }) => {
   // Logout user
   const logout = () => {
     localStorage.removeItem('token');
-    authService.removeAuthToken();
+  // authService.removeAuthToken(); // removed, now handled by localStorage.removeItem
     dispatch({ type: 'LOGOUT' });
   };
 

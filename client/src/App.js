@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
@@ -8,7 +8,8 @@ import './assets/styles/index.css';
 import WhatsAppFAB from './components/WhatsAppFAB';
 import ScrollToTop from './components/ScrollToTop';
 
-// Pages
+import { useDispatch } from 'react-redux';
+import { checkAuth } from './store/slices/authSlice';
 import Home from './pages/Home';
 import About from './pages/About';
 import Properties from './pages/Properties';
@@ -18,6 +19,7 @@ import Login from './pages/Login';
 import ContactUs from './pages/ContactUs';
 import NotFound from './pages/NotFound';
 import AdminSignup from './pages/AdminSignup';
+import PrivateRoute from './components/PrivateRoute';
 
 function AppContent() {
   return (
@@ -29,7 +31,11 @@ function AppContent() {
           <Route path="/properties" element={<Properties />} />
           <Route path="/property/:id" element={<PropertyDetail />} />
           <Route path="/contact" element={<ContactUs />} />
-          <Route path="/admindashboard" element={<AdminDashboard />} />
+          <Route path="/admindashboard" element={
+            <PrivateRoute>
+              <AdminDashboard />
+            </PrivateRoute>
+          } />
           <Route path="/adminlogin" element={<Login />} />
           <Route path="/adminsignup" element={<AdminSignup />} />
           <Route path="*" element={<NotFound />} />
@@ -45,7 +51,15 @@ function AppContent() {
   );
 }
 
+
 function App() {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      dispatch(checkAuth());
+    }
+  }, [dispatch]);
   return (
     <Router>
       <ScrollToTop />

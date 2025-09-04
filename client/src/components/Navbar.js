@@ -1,12 +1,15 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useSelector, useDispatch } from 'react-redux';
+import { logOut } from '../store/slices/authSlice';
 
 const Navbar = () => {
-  const { user, isAuthenticated, logout } = useAuth();
+  const dispatch = useDispatch();
+  const { user, token } = useSelector((state) => state.auth);
+  const isAuthenticated = !!user && !!token;
 
   const handleLogout = () => {
-    logout();
+    dispatch(logOut());
   };
 
   return (

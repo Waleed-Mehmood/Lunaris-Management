@@ -15,6 +15,10 @@ const api = axios.create({
 // Login user
 const login = async (userData) => {
   const response = await api.post('/api/v1/user/log-in', userData);
+  // Set token in axios header for future requests
+  if (response.data.token) {
+    api.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
+  }
   return response.data;
 };
 
@@ -57,7 +61,14 @@ const logOut = async () => {
 
 // Check auth
 const checkAuth = async () => {
-  const response = await api.get('/api/v1/user/check-auth');
+  // Set token from localStorage if available
+  const token = localStorage.getItem('token');
+  if (token) {
+    api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+  }
+  const response = await api.get('/api/v1/user/check-auth', {
+    headers: { 'Cache-Control': 'no-cache' }
+  });
   return response.data;
 };
 

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import lunarisLogo from '../assets/images/Lunaris-management-logo.png';
-import aboutUsImg from '../assets/images/about2.jpg';
+import aboutUsImg from '../assets/images/about3.jpg';
 import landingBgJpeg from '../assets/images/landing-bg.jpeg';
 import Footer from '../components/Footer';
 
@@ -130,7 +130,7 @@ const About = () => {
                 
                 <div className="space-y-4">
                   <p className="text-gray-600 text-sm sm:text-base leading-relaxed">
-                    At Lunaris, we understand that your property is more than just an asset — it's an investment that deserves expert care and proven results. We transform short-term rental management into a seamless, reliable, and scalable system, where owners gain confidence, guests enjoy exceptional experiences, and properties perform at their highest potential.
+                    At Lunaris, we understand that your property is more than just an asset it's an investment that deserves expert care and proven results. We transform short-term rental management into a seamless, reliable, and scalable system, where owners gain confidence, guests enjoy exceptional experiences, and properties perform at their highest potential.
                   </p>
                   
                   <p className="text-gray-600 text-sm sm:text-base leading-relaxed">

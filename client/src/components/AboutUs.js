@@ -9,7 +9,7 @@ const AboutUs = () => {
       className="py-12 sm:py-16 bg-white"
       initial={{ opacity: 0, y: 40 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.7, ease: "easeOut" }}
+    transition={{ duration: 0.3, ease: "easeOut" }}
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
@@ -19,7 +19,7 @@ const AboutUs = () => {
             initial={{ x: -60, opacity: 0 }}
             whileInView={{ x: 0, opacity: 1 }}
             viewport={{ once: true, amount: 0.4 }}
-            transition={{ duration: 0.8, type: "spring", bounce: 0.3 }}
+      transition={{ duration: 0.3, type: "spring", bounce: 0.3 }}
           >
             <div className="flex items-center mb-6 sm:mb-8 w-full">
               {/* Left Arrow */}
@@ -32,7 +32,7 @@ const AboutUs = () => {
                 className="mr-2 sm:w-8 sm:h-3"
                 initial={{ x: -20, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
+          transition={{ duration: 0.2 }}
               >
                 <path d="M12 6H0" stroke="#CBE9FF" strokeWidth="2" />
                 <path d="M6 1L0 6L6 11" stroke="#CBE9FF" strokeWidth="2" />
@@ -73,7 +73,7 @@ const AboutUs = () => {
                 transition={{ duration: 0.5, delay: 0.2 }}
               >
                 At Lunaris, we understand that your property is more than just
-                an asset — it's an investment that deserves expert care and
+                an asset it's an investment that deserves expert care and
                 proven results. We transform short-term rental management into a
                 seamless, reliable, and scalable system, where owners gain
                 confidence, guests enjoy exceptional experiences, and properties

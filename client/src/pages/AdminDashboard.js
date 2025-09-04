@@ -159,15 +159,13 @@ const AdminDashboard = () => {
   const dispatch = useDispatch();
   const { user, token, isLoading } = useSelector(state => state.auth);
 
-  // Check authentication on mount
+  // Check authentication using Redux state
   useEffect(() => {
-    dispatch(checkAuth()).then((action) => {
-      if (action.type === 'auth/checkAuth/rejected') {
-        window.location.href = '/adminlogin';
-      }
-    });
+    if (!user || !token) {
+      window.location.href = '/adminlogin';
+    }
     dispatch(fetchProperties());
-  }, [dispatch]);
+  }, [user, token, dispatch]);
 
   const handleLogout = () => {
     dispatch(logOut());

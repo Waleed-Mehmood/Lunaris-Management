@@ -117,6 +117,9 @@ export const authSlice = createSlice({
         state.isSuccess = true;
         state.user = action.payload.user;
   state.token = action.payload.token;
+          if (action.payload.token) {
+            localStorage.setItem('token', action.payload.token);
+          }
       })
       .addCase(login.rejected, (state, action) => {
         state.isLoading = false;
@@ -132,6 +135,7 @@ export const authSlice = createSlice({
         state.isSuccess = false;
         state.isError = false;
         state.message = "";
+    localStorage.removeItem('token');
       })
       .addCase(checkAuth.pending, (state) => {
         state.isLoading = true;
