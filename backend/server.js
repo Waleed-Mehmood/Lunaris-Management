@@ -31,7 +31,7 @@ app.use("/public", express.static(path.join(__dirname, "public")));
 app.use(
   cors({
     // origin: "https://lunarismanagement.com",
-    origin: "http://localhost:3000",
+    origin: "https://lunaris-management.vercel.app",
     credentials: true,
   })
 );

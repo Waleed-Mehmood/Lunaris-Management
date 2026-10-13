@@ -4,14 +4,14 @@ import { Link } from "react-router-dom";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
+gsap.registerPlugin(ScrollTrigger);
+
 const AboutUs = () => {
   const sectionRef = useRef(null);
   const contentRef = useRef(null);
   const imageRef = useRef(null);
 
   useEffect(() => {
-    gsap.registerPlugin(ScrollTrigger);
-    
     // Main section animation
     gsap.fromTo(sectionRef.current,
       { opacity: 0, y: 40 },

@@ -59,7 +59,7 @@ const propertySlice = createSlice({
       })
       .addCase(fetchProperties.fulfilled, (state, action) => {
         state.loading = false;
-        state.properties = action.payload.data;
+        state.properties = Array.isArray(action.payload?.data) ? action.payload.data : [];
       })
       .addCase(fetchProperties.rejected, (state, action) => {
         state.loading = false;

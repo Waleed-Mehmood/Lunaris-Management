@@ -423,7 +423,9 @@ const Properties = () => {
           ) : filteredProperties.length === 0 ? (
             <div className="text-center col-span-4 py-8">No properties found.</div>
           ) : filteredProperties.map((property, idx) => {
+            const images = Array.isArray(property.images) ? property.images : [];
             const currentIndex = currentImageIndex[property._id] || 0;
+            const currentImage = images[currentIndex] || images[0];
             return (
               <motion.div
                 key={property._id}
@@ -440,10 +442,10 @@ const Properties = () => {
                   transition={{ type: 'spring', stiffness: 200, damping: 18 }}
                 >
                   <motion.img
-                    src={property.images && property.images.length > 0
-                      ? (property.images[currentIndex].startsWith('http')
-                          ? property.images[currentIndex]
-                          : `${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/public/images/properties/${property.images[currentIndex]}`)
+                    src={currentImage
+                      ? (currentImage.startsWith('http')
+                          ? currentImage
+                          : `${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/public/images/properties/${currentImage}`)
                       : '/default-property.jpg'}
                     alt={property.title}
                     className="w-full h-64 object-cover"
@@ -452,12 +454,12 @@ const Properties = () => {
                     transition={{ duration: 0.7, delay: 0.2 }}
                   />
                   {/* Navigation Arrows */}
-                  {property.images.length > 1 && (
+                  {images.length > 1 && (
                     <>
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          prevImage(property._id, property.images.length);
+                          prevImage(property._id, images.length);
                         }}
                         className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-80 hover:bg-opacity-100 p-2 rounded-full transition-all opacity-0 group-hover:opacity-100 z-10"
                       >
@@ -466,7 +468,7 @@ const Properties = () => {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          nextImage(property._id, property.images.length);
+                          nextImage(property._id, images.length);
                         }}
                         className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-80 hover:bg-opacity-100 p-2 rounded-full transition-all opacity-0 group-hover:opacity-100 z-10"
                       >
@@ -475,9 +477,9 @@ const Properties = () => {
                     </>
                   )}
                   {/* Image Dots Indicator */}
-                  {property.images.length > 1 && (
+                  {images.length > 1 && (
                     <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex space-x-1 z-10">
-                      {property.images.map((_, index) => (
+                      {images.map((_, index) => (
                         <button
                           key={index}
                           onClick={(e) => {
