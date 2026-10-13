@@ -1,6 +1,6 @@
 
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { fetchProperties as fetchPropertiesService, addProperty as addPropertyService, editProperty as editPropertyService, deleteProperty as deletePropertyService, updatePropertyImages as updatePropertyImagesService, fetchPropertyById as fetchPropertyByIdService } from '../../services/propertyService';
+import { fetchProperties as fetchPropertiesService, addProperty as addPropertyService, editProperty as editPropertyService, deleteProperty as deletePropertyService, fetchPropertyById as fetchPropertyByIdService } from '../../services/propertyService';
 // Fetch single property by ID
 export const fetchPropertyById = createAsyncThunk(
   'property/fetchPropertyById',
@@ -42,14 +42,6 @@ export const deleteProperty = createAsyncThunk(
     return await deletePropertyService(id);
   }
 );
-// If you want to support image update from slice, you can add:
-// export const updatePropertyImages = createAsyncThunk(
-//   'property/updatePropertyImages',
-//   async ({ id, imagesData }) => {
-//     return await updatePropertyImagesService(id, imagesData);
-//   }
-// );
-
 const propertySlice = createSlice({
   name: 'property',
   initialState: {

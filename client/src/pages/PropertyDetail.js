@@ -3,7 +3,7 @@ import * as FaIcons from 'react-icons/fa';
 import { Link, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchPropertyById } from '../store/slices/propertySlice';
-import { FaStar, FaChevronLeft, FaChevronRight, FaWifi, FaCar, FaSwimmingPool, FaUtensils, FaTv, FaSnowflake, FaHeart, FaShare, FaMapMarkerAlt } from 'react-icons/fa';
+import { FaStar, FaChevronLeft, FaChevronRight, FaHeart, FaShare, FaMapMarkerAlt } from 'react-icons/fa';
 import lunarisLogo from '../assets/images/Lunaris-management-logo.png';
 import lunarisColorfulLogo from '../assets/lunaris-logo.png';
 import Footer from '../components/Footer';
@@ -15,12 +15,6 @@ const PropertyDetail = () => {
   console.log('Selected Property:', selectedProperty); // Debug log
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [selectedDates, setSelectedDates] = useState({
-    checkIn: '',
-    checkOut: '',
-    guests: 1
-  });
-
   useEffect(() => {
     if (id) {
       dispatch(fetchPropertyById(id));
@@ -60,11 +54,6 @@ const PropertyDetail = () => {
     if (propertyData && Array.isArray(propertyData.images) && propertyData.images.length > 0) {
       setCurrentImageIndex((prev) => (prev - 1 + propertyData.images.length) % propertyData.images.length);
     }
-  };
-
-  const handleBooking = () => {
-    console.log('Booking details:', selectedDates);
-    // Implement booking functionality
   };
 
   const handleShare = async () => {
