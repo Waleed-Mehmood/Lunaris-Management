@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { checkAuth, logOut } from '../store/slices/authSlice';
+import { logOut } from '../store/slices/authSlice';
 import { addProperty } from '../services/propertyService';
 import { fetchProperties } from '../store/slices/propertySlice';
 import { Link } from 'react-router-dom';
@@ -23,7 +23,7 @@ const AdminDashboard = () => {
   const [showEditPropertyModal, setShowEditPropertyModal] = useState(false);
   const [editProperty, setEditProperty] = useState(null);
   const [editSelectedImages, setEditSelectedImages] = useState([]);
-  const [editImagePreviewUrls, setEditImagePreviewUrls] = useState([]);
+  const [, setEditImagePreviewUrls] = useState([]);
   const [editLoading, setEditLoading] = useState(false);
   // Edit Property Handler
   const { editProperty: editPropertyThunk } = require('../store/slices/propertySlice');
@@ -150,7 +150,7 @@ const AdminDashboard = () => {
   const [showIconPicker, setShowIconPicker] = useState(false);
   const [activeTab, setActiveTab] = useState('properties');
   const dispatch = useDispatch();
-  const { user, token, isLoading } = useSelector(state => state.auth);
+  const { user, token } = useSelector(state => state.auth);
 
   // Check authentication using Redux state
   useEffect(() => {
@@ -195,7 +195,6 @@ const AdminDashboard = () => {
 
   const [selectedImages, setSelectedImages] = useState([]);
   const [customAmenityInput, setCustomAmenityInput] = useState('');
-  const [customFeatureInput, setCustomFeatureInput] = useState('');
   const [customFeatureName, setCustomFeatureName] = useState('');
   const [customFeatureDescription, setCustomFeatureDescription] = useState('');
   const [customFeatureIcon, setCustomFeatureIcon] = useState('FaPlus');
@@ -508,7 +507,7 @@ const AdminDashboard = () => {
     }
 
     try {
-      const res = await addProperty(formData);
+      await addProperty(formData);
       // Refetch properties after adding
       await dispatch(fetchProperties());
       // Reset form
@@ -528,7 +527,6 @@ const AdminDashboard = () => {
       });
       setSelectedImages([]);
       setCustomAmenityInput('');
-      setCustomFeatureInput('');
       setCustomFeatureName('');
       setCustomFeatureDescription('');
       setReviewForm({

@@ -1,17 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import lunarisLogo from '../assets/images/Lunaris-management-logo.png';
 import { Link } from 'react-router-dom';
-import { 
-  FaPhone, 
-  FaEnvelope, 
-  FaMapMarkerAlt, 
-  FaClock, 
+import {
   FaFacebookF, 
   FaLinkedinIn, 
   FaInstagram,
   FaPaperPlane,
-  FaCheckCircle,
   FaBuilding,
   FaUsers,
   FaHeadset,
@@ -36,14 +31,7 @@ const ContactUs = () => {
     message: ''
   });
 
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    setIsVisible(true);
-  }, []);
 
   const validateForm = () => {
     const newErrors = {};
@@ -86,31 +74,8 @@ const ContactUs = () => {
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    if (!validateForm()) return;
-    
-    setIsLoading(true);
-    
-    // Simulate API call
-    setTimeout(() => {
-      console.log('Form submitted:', formData);
-      setIsSubmitted(true);
-      setIsLoading(false);
-      
-      // Reset form after submission
-      setTimeout(() => {
-        setFormData({
-          name: '',
-          email: '',
-          phone: '',
-          subject: '',
-          message: ''
-        });
-        setIsSubmitted(false);
-      }, 5000);
-    }, 2000);
+  const handleSubmit = (e) => {
+    if (!validateForm()) e.preventDefault();
   };
 
   const contactInfo = [
@@ -512,17 +477,13 @@ const ContactUs = () => {
                   <p className="text-gray-600">Fill out the form below and we'll get back to you within 24 hours</p>
                 </div>
                 
-                {isSubmitted && (
-                  <div className="mb-6 p-6 bg-gradient-to-r from-green-50 to-green-100 border border-green-200 text-green-800 rounded-2xl flex items-center animate-fade-in">
-                    <FaCheckCircle className="text-green-500 text-2xl mr-4" />
-                    <div>
-                      <p className="font-semibold">Message sent successfully!</p>
-                      <p className="text-sm text-green-600">We'll get back to you within 24 hours.</p>
-                    </div>
-                  </div>
-                )}
-
-                <form className="space-y-6" action="https://formsubmit.co/lunarismanagement14@gmail.com" method="POST">
+                <form
+                  className="space-y-6"
+                  action="https://formsubmit.co/lunarismanagement14@gmail.com"
+                  method="POST"
+                  noValidate
+                  onSubmit={handleSubmit}
+                >
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <label htmlFor="name" className="block text-sm font-semibold text-gray-700 mb-2">
@@ -616,20 +577,10 @@ const ContactUs = () => {
 
                   <button
                     type="submit"
-                    disabled={isLoading}
                     className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-4 px-8 rounded-xl font-semibold hover:from-blue-600 hover:to-blue-700 focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50 transition-all duration-300 transform hover:scale-105 hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center"
                   >
-                    {isLoading ? (
-                      <>
-                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                        Sending...
-                      </>
-                    ) : (
-                      <>
-                        <FaPaperPlane className="mr-2" />
-                        Send Message
-                      </>
-                    )}
+                    <FaPaperPlane className="mr-2" />
+                    Send Message
                   </button>
                 </form>
               </div>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const ClientReviews = () => {
@@ -33,14 +33,6 @@ const ClientReviews = () => {
     window.addEventListener("resize", checkScreenSize);
     return () => window.removeEventListener("resize", checkScreenSize);
   }, [screenSize]);
-
-  // Autoplay effect
-  useEffect(() => {
-    const interval = setInterval(() => {
-      nextSlide();
-    }, 4000); // Change slide every 4 seconds
-    return () => clearInterval(interval);
-  }, [currentSlide, screenSize]);
 
   // Updated review data from user
   const reviews = [
@@ -140,6 +132,16 @@ const ClientReviews = () => {
   const cardsToShow = getCardsToShow();
   const maxSlide = Math.max(0, reviews.length - cardsToShow);
 
+  // Autoplay effect
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide((previousSlide) =>
+        previousSlide >= maxSlide ? 0 : previousSlide + 1
+      );
+    }, 4000); // Change slide every 4 seconds
+    return () => clearInterval(interval);
+  }, [maxSlide]);
+
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev >= maxSlide ? 0 : prev + 1));
     if (currentSlide >= maxSlide) {
@@ -195,16 +197,16 @@ const ClientReviews = () => {
     }
   };
 
-  const handleMouseMove = (e) => {
+  const handleMouseMove = useCallback((e) => {
     if (!isDragging) return;
 
     e.preventDefault();
     setCurrentX(e.clientX);
     const offset = e.clientX - startX;
     setDragOffset(offset);
-  };
+  }, [isDragging, startX]);
 
-  const handleMouseUp = () => {
+  const handleMouseUp = useCallback(() => {
     if (!isDragging) return;
 
     setIsDragging(false);
@@ -217,17 +219,16 @@ const ClientReviews = () => {
     const dragDistance = currentX - startX;
 
     if (Math.abs(dragDistance) > dragThreshold) {
-      if (dragDistance > 0) {
-        // Dragged right - go to previous slide
-        prevSlide();
-      } else {
-        // Dragged left - go to next slide
-        nextSlide();
-      }
+      setCurrentSlide((previousSlide) => {
+        if (dragDistance > 0) {
+          return previousSlide <= 0 ? maxSlide : previousSlide - 1;
+        }
+        return previousSlide >= maxSlide ? 0 : previousSlide + 1;
+      });
     }
 
     setDragOffset(0);
-  };
+  }, [isDragging, currentX, startX, maxSlide]);
 
   const handleMouseLeave = () => {
     if (isDragging) {

@@ -173,7 +173,7 @@ const Footer = () => {
             >
               <span className="text-gray-400">Developed by</span>
               <a 
-                href="https://techxserve.co/" 
+                href="https://techxserve.com/" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="text-blue-400 font-semibold hover:text-blue-300 transition-colors duration-300"

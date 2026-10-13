@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { fetchProperties } from '../store/slices/propertySlice';
 import { Link } from 'react-router-dom';
-import { FaStar, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import lunarisLogo from '../assets/images/Lunaris-management-logo.png';
 import Footer from '../components/Footer';
 
